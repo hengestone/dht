@@ -11,7 +11,7 @@
 
 open(Port, Opts) ->
 	gen_udp:open(Port, Opts).
-	
+
 send(Socket, IP, Port, Packet) ->
 	gen_udp:send(Socket, IP, Port, Packet).
 

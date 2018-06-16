@@ -56,10 +56,10 @@ dht_iter_search(NodeID, Target, Width, Retries, Todo, #search_state{ query_type 
 
     %% Assert there are no errors, since workers are not to die here
     {Results, [] = _Errors} = dht_par:partition(CallRes),
-    
+
     %% Maintain invariants for the next round by updating the necessary data structures:
     #{ new := New, next := NextState } = track_state(Results, Todo, State),
-    
+
     WorkQueue = lists:usort(dht_metric:neighborhood(Target, New, Width)),
     Retry = update_retries(NodeID, Retries, WorkQueue, NextState),
     dht_iter_search(NodeID, Target, Width, Retry, WorkQueue, NextState).
@@ -72,7 +72,7 @@ update_retries(NodeID, K, WorkQueue, State) ->
           work_queue -> ?SEARCH_RETRIES;
           alive_set -> K - 1
       end.
-    
+
 %% Once a round completes, track the state of the round in the #search_state{} record.
 %%
 %% Rules:
@@ -90,11 +90,11 @@ track_state(Results, Processed,
 		acc = Acc } = State) ->
     Next = State#search_state {
         alive = gb_sets:union(Alive, gb_sets:from_list( alive_nodes(Results)) ),
-        done = Queried = gb_sets:union(Done, gb_sets:from_list(Processed)), 
+        done = Queried = gb_sets:union(Done, gb_sets:from_list(Processed)),
         acc = accum_peers(QType, Acc, Results)
     },
     New = [N || N <- all_nodes(Results), not gb_sets:is_member(N, Queried)],
-    
+
     #{ new => New, next => Next }.
 
 %% Select nodes from a response
@@ -103,7 +103,7 @@ resp_nodes(_) -> [].
 
 %% all_nodes/1 gathers nodes from a set of parallel queries
 all_nodes(Resp) -> lists:concat([resp_nodes(R) || {_N, R} <- Resp]).
-    
+
 %% Compute if a response is ok, for use in a predicate
 ok({error, _}) -> false;
 ok({error, _ID, _Code, _Msg}) -> false;

@@ -113,7 +113,7 @@ store_at_peers(STS, ID, Location) ->
 pick(K, ID, Candidates) ->
     Ordered = lists:sort(fun({{IDx, _, _}, _}, {{IDy, _, _}, _}) -> dht_metric:d(ID, IDx) < dht_metric:d(ID, IDy) end, Candidates),
     take(K, Ordered).
-    
+
 take(0, _Rest) -> [];
 take(_K, []) -> [];
 take(K, [C | Cs]) -> [C | take(K-1, Cs)].

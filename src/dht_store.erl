@@ -8,7 +8,7 @@
 -behaviour(gen_server).
 -include("dht_constants.hrl").
  -include_lib("stdlib/include/ms_transform.hrl").
- 
+
 %% lifetime API
 -export([start_link/0, sync/0]).
 
@@ -40,7 +40,7 @@ sync() ->
 
 store(ID, {IP, Port}) ->
     gen_server:call(?MODULE, {store, ID, {IP, Port}}).
-    
+
 find(ID) ->
     gen_server:call(?MODULE, {find, ID}).
 
@@ -65,20 +65,20 @@ handle_call(sync, _From, State) ->
     {reply, ok, State};
 handle_call(_Msg, _From, State) ->
     {reply, {error, unknown_msg}, State}.
-	
+
 handle_cast(_Msg, State) ->
     {noreply, State}.
-    
+
 handle_info(evict, State) ->
     dht_time:send_after(5 * 60 * 1000, ?MODULE, evict),
     evict(),
     {noreply, State};
 handle_info(_Msg, State) ->
     {noreply, State}.
-    
+
 terminate(_How, _State) ->
     ok.
-    
+
 code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
@@ -91,7 +91,7 @@ evict() ->
 evict(Key) ->
     Now = dht_time:monotonic_time(),
     Window = Now - dht_time:convert_time_unit(?STORE_TIME, milli_seconds, native),
-    MS = ets:fun2ms(fun({K, _, T}) -> K == Key andalso T < Window end), 
+    MS = ets:fun2ms(fun({K, _, T}) -> K == Key andalso T < Window end),
     ets:select_delete(?TBL, MS).
 
 push(ID, Loc) ->
@@ -108,6 +108,3 @@ push(ID, Loc) ->
             ets:insert(?TBL, {ID, Loc, Now}),
             ok
     end.
-
-            
-        

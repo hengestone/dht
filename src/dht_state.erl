@@ -10,7 +10,7 @@
 %%  * The routing table itself - In dht_routing_table
 %%  * The set of timer meta-data for node/range refreshes - In dht_routing_meta
 %%  * The policy rules for what to do - In dht_state (this file)
-%% 
+%%
 %% This modules main responsibility is to call out to helper modules
 %% and make sure to maintain consistency of the above three states
 %% we maintain.
@@ -71,7 +71,7 @@
 %% ----------------------------------------------------------
 start_link(StateFile, BootstrapNodes) ->
 	start_link(dht_metric:mk(), StateFile, BootstrapNodes).
-	
+
 start_link(RequestedID, StateFile, BootstrapNodes) ->
     gen_server:start_link({local, ?MODULE},
 			  ?MODULE,
@@ -81,7 +81,7 @@ start_link(RequestedID, StateFile, BootstrapNodes) ->
 info() ->
     MetaData = call(info),
     dht_routing_meta:info(MetaData).
-    
+
 %% @doc dump_state/0 dumps the routing table state to disk
 %% @end
 dump_state() ->
@@ -98,7 +98,7 @@ dump_state(Filename) ->
 call(X) -> gen_server:call(?MODULE, X).
 cast(X) -> gen_server:cast(?MODULE, X).
 
-%% QUERIES 
+%% QUERIES
 %% -----------
 
 %% @equiv closest_to(NodeID, 8)
@@ -156,10 +156,10 @@ init([RequestedNodeID, StateFile, BootstrapNodes]) ->
     %% erlang:process_flag(trap_exit, true),
 
     RoutingTbl = load_state(RequestedNodeID, StateFile),
-    
+
     %% @todo, consider just folding over these as well rather than a background insert.
     ok = dht_refresh:insert_nodes(BootstrapNodes),
-    
+
     {ok, ID, Routing} = dht_routing_meta:new(RoutingTbl),
     {ok, #state { node_id = ID, routing = Routing}}.
 

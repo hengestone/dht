@@ -13,7 +13,7 @@ pmap(F, Es) ->
     Parent = self(),
     Running = [spawn_monitor(fun() -> Parent ! {self(),  F(E)} end) || E <- Es],
     collect(Running, 5000).
-    
+
 collect([], _Timeout) -> [];
 collect([{Pid, MRef} | Next], Timeout) ->
     receive
@@ -25,7 +25,7 @@ collect([{Pid, MRef} | Next], Timeout) ->
     after Timeout ->
         exit(pmap_timeout)
     end.
-    
+
 partition(Res) -> partition(Res, [], []).
 
 partition([], OK, Err) -> {lists:reverse(OK), lists:reverse(Err)};

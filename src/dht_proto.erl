@@ -11,7 +11,7 @@
 	ping |
 	{find, node | value, non_neg_integer()} |
 	{store, dht:token(), dht:id(), inet:port_number()}.
-	
+
 -type response() ::
 	ping |
 	{find, node, dht:token(), [dht:peer()]} |
@@ -22,7 +22,7 @@
 	{query, dht:tag(), dht:id(), query()} |
 	{response, dht:tag(), dht:id(), response()} |
 	{error, dht:tag(), integer(), binary()}.
-	
+
 -export_type([msg/0, query/0, response/0]).
 
 %% Encoding on the wire
@@ -43,7 +43,7 @@ encode_response({find, value, Token, Vs}) ->
     [<<$f, $v, Token/binary, L:8>>, encode_peers(Vs)];
 encode_response(store) ->
     $s.
-    
+
 encode_peers(Vs) -> iolist_to_binary(encode_ps(Vs)).
 
 encode_ps([]) -> [];
@@ -111,4 +111,3 @@ decode(<<175,64,13,52,167,136,55,45, Tag:2/binary, ID:256, $e, ErrCode:16, Error
     {error, Tag, ID, ErrCode, ErrorString};
 decode(<<"EDHT-KDM-", 0:8, _Rest/binary>>) ->
     {error, {old_version, <<0,0,0,0,0,0,0,0>>}}.
-

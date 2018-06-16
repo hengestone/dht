@@ -14,7 +14,7 @@
 -spec monotonic_time() -> integer().
 monotonic_time() ->
     erlang:monotonic_time().
-	
+
 time_offset() ->
     erlang:time_offset().
 
